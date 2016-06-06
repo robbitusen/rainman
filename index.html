@@ -1,22 +1,90 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>Yes</title>
-</head>
-<body>
-	
-	<canvas id="rain"></canvas>
+	<head>
+		<meta charset="UTF-8">
+		<title>Yes</title>
 
-	<script>
+		<style>
+			html, body {
+				margin: 0;
+			}
+		</style>
+	</head>
+	<body>
 		
-		var canvas = document.getElementById("rain");
-		var ctx = canvas.getContext("2d");
+		<canvas id="rain"></canvas>
 
-		console.log(canvas);
-		console.log(ctx);
+		<script>
 
-	</script>
+			/* setup canvas */
+			var canvas = document.getElementById("rain");
+			var canvasCtx = canvas.getContext("2d");
+			var fps = 50;
+			var freq = 40; //max: 100, min: 0;
 
-</body>
+			/* setup audio */
+			var audio = new Audio('leaning-trees.mp3');
+			audio.loop = true;
+			audio.play();
+
+			/* canvas setup */
+			canvas.width = window.innerWidth;
+			canvas.height = window.innerHeight;
+			canvasCtx.fillStyle = "#000";
+			canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
+
+			/* things */
+			var entities = [];
+
+			function run() {
+
+				//Blit
+				canvasCtx.fillStyle = "#000";
+				canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
+
+				//Whatever
+				generateRain();
+				for(var i = 0; i < entities.length; i++) {
+					entities[i].update();
+					entities[i].draw();
+				}	
+			};
+
+			function generateRain() {
+
+				if ( ( Math.random() * 100 ) < freq ) {
+					entities.push( new Rain() );
+				}
+				//entities.push(new Rain());
+
+				console.log(entities.length);
+			};
+
+			function Rain() {
+				this.x = Math.random() * window.innerWidth;
+				this.y = 0;
+				this.acc = 1.5;
+				this.vel = 0;
+				this.width = 8; 
+				this.height = 13;
+			};
+
+			Rain.prototype.update = function() {
+				this.vel += this.acc;
+				this.y += this.vel;
+			};
+
+			Rain.prototype.draw = function() {
+				canvasCtx.fillStyle = "rgb(" + ( Math.floor(Math.random() * 254)) + ", " + ( Math.floor(Math.random() * 254)) + ", 255";
+				canvasCtx.fillRect(this.x, this.y, this.width, this.height);
+			};
+
+			//audio.start();
+			setInterval(function() {
+				run();
+			}, 1000 / fps);
+
+		</script>
+
+	</body>
 </html>
